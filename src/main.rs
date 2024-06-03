@@ -10,7 +10,7 @@ use clap_complete::Shell;
 use env_logger::Builder;
 use log::LevelFilter;
 use mdbook::utils;
-use std::env;
+use std::{env, fs};
 use std::ffi::OsStr;
 use std::io::Write;
 use std::path::PathBuf;
@@ -124,7 +124,8 @@ fn get_book_dir(args: &ArgMatches) -> PathBuf {
     if let Some(p) = args.get_one::<PathBuf>("dir") {
         // Check if path is relative from current dir, or absolute...
         if p.is_relative() {
-            env::current_dir().unwrap().join(p)
+            // env::current_dir().unwrap().join(p)
+            fs::canonicalize(p).expect("Unable to determine the current directory")
         } else {
             p.to_path_buf()
         }

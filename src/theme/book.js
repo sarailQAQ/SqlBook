@@ -129,21 +129,22 @@ function playground_text(playground, hidden = true) {
 
         result_block.innerText = "Running...";
 
-        fetch_with_timeout("https://play.rust-lang.org/evaluate.json", {
-            headers: {
-                'Content-Type': "application/json",
-            },
+        const body = new FormData()
+        body.append('sql', text)
+
+        fetch_with_timeout("http://127.0.0.1:8080/exec", {
             method: 'POST',
             mode: 'cors',
-            body: JSON.stringify(params)
+            body
         })
-        .then(response => response.json())
+        .then(response => response.text())
         .then(response => {
-            if (response.result.trim() === '') {
+            console.log(response)
+            if (response.length === 0) {
                 result_block.innerText = "No output";
                 result_block.classList.add("result-no-output");
             } else {
-                result_block.innerText = response.result;
+                result_block.innerText = response;
                 result_block.classList.remove("result-no-output");
             }
         })
