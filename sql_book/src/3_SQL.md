@@ -38,10 +38,11 @@ CREATE TABLE <表名>	(
 - <表级完整性约束条件>：涉及一个或多个属性列的完整性约束条件
 如果完整性约束条件涉及到该表的多个属性列，则必须定义在表级上，否则既可以定义在列级也可以定义在表级。
 
-例如：
+如：
 
 ```sql
-# 建立“学生”表 CStudent，学号是主码，姓名取值唯一
+-- 例 3.1
+-- 建立“学生”表 CStudent，学号是主码，姓名取值唯一
 CREATE TABLE CStudent(
   SS    VARCHAR PRIMARY KEY,/* 列级完整性约束条件,Sno是主码*/
   Sname VARCHAR(20) UNIQUE, /* Sname取唯一值*/
@@ -65,16 +66,18 @@ Create table CSC(
 );
 ```
 
+例 3.1：创建一个表，并用 `SHOW TABLES`查看刚创建的表：
+
 ```rust,editable
 -- 在这里，你可以执行 SQL 语句
-CREATE TABLE CStudent(
-  SS    VARCHAR PRIMARY KEY,/* 列级完整性约束条件,Sno是主码*/
-  Sname VARCHAR(20) UNIQUE, /* Sname取唯一值*/
-  Ssex  VARCHAR(2),
-  Sage  INT,
-  Sdept VARCHAR(20)
+CREATE TABLE Student(
+  SS VARCHAR
 );
+
+SHOW TABLES;
 ```
+
+
 
 ## 3.2.2 数据类型
 
@@ -102,9 +105,14 @@ SQL 中域的概念用数据类型来实现，定义表的属性时需要指明�
 
 ## 3.2.3 修改表
 
-如果想修改已存在的表结构，可以使用 `ALTER TABLE` 语句。
+如果想修改已存在的表结构，可以使用 `ALTER TABLE` 语句。`ALTER TABLE`的主要功能有：
 
-### RENAME TO 子句
+- `RENAME TO`：重命名表
+- `RENAME`：重命名列、约束等
+- `ADD`：添加对象，如列、索引、约束等
+- `ALTER COLUMN`：修改列
+
+###  RENAME TO 子句
 
 `RENAME TO` 子句用来重命名表，用法如下：
 
@@ -120,9 +128,10 @@ ALTER TABLE old_table_name RENAME TO new_table_name;
 
 ```sql
 ALTER TABLE table_name RENAME COLUMN old_column_name TO new_column_name;
+```
 
-# 将 CStudent 中的 SS 列重命名为 Sno
-ALTER TABLE CStudent RENAME COLUMN SS to Sno;
+```rust, editable
+
 ```
 
 **重命名索引：**
@@ -145,9 +154,6 @@ ALTER TABLE table_name RENAME CONSTRAINT old_constraint_name TO new_constraint_n
 
 ```sql
 ALTER TABLE table_name ADD COLUMN column_name data_type [column_constraints];
-
-# 向 CStudent 中添加 SName 列
-ALTER Table CStudent Add Column SName CHAR(10);
 ```
 
 **添加索引或约束：**
@@ -198,12 +204,23 @@ ALTER TABLE table_name ALTER COLUMN column_name SET NOT NULL;
 
 <aside>
 💡 不是所有的数据库系统都支持完全相同的 `ALTER COLUMN` 语法。例如，在 MySQL 中，通常使用 `MODIFY COLUMN` 或 `CHANGE COLUMN` 来完成类似的任务，而在 SQL Server 中则可以直接使用 `ALTER COLUMN`。在执行这类操作之前，务必了解你所使用的数据库系统的特定语法要求，并考虑到修改列属性可能对现有数据造成的影响，特别是当涉及数据类型的更改时，必须确保转换能够成功且有意义。
-
 </aside>
 
+### 练习 3.2.3 
+
 ```rust,editable
--- 在这里，你可以执行 SQL 语句
-ALTER Table CStudent Alter Column SNo type INT;
+-- 1. 将 Student 中的 SS 列重命名为 Sno
+ALTER TABLE Student RENAME COLUMN SS to Sno;
+```
+
+```rust,editable
+-- 2. 向 Student 中添加 SName 列
+ALTER Table Student Add Column SName CHAR(10);
+```
+
+```rust,editable
+-- 3. 将 Student 表中的 Sno 列的类型改为 INT
+ALTER Table Student Alter Column Sno type INT;
 ```
 
 ## 3.2.4 删除表
@@ -222,9 +239,11 @@ Drop TABLE CStudent;
 
 此外，在某些情况下，如果表与其他表之间有关联（例如外键约束），在删除表之前可能需要解除这些关联或者设定适当的级联删除规则。
 
+### 练习 3.2.4
+
 ```rust,editable
 -- 在这里，你可以执行 SQL 语句
-Drop TABLE CStudent;
+Drop TABLE Student;
 ```
 
 # 3.3 DML
@@ -243,12 +262,15 @@ VALUES (value1, value2, ..., valueN);
 - `(column1, column2, ..., columnN)` 是你想插入数据的列名列表。这一步可以省略，如果要按表定义的顺序插入所有列的值。
 - `(value1, value2, ..., valueN)` 是对应列的值列表。这些值必须与列的数据类型匹配，并且必须满足列的约束条件（如NOT NULL、UNIQUE等）。
 
-例如：
+例：
 
 ```sql
- # 将一个新学生元组插入到 Student 表中。
-INSERT INTO CStudent VALUES(201215121,'李勇','男',20,'CS');
+ -- 将一个新学生元组插入到 Student 表中。
+INSERT INTO CStudent VALUES (201215121,'李勇','男',20,'CS');
+Insert into CSC(Sno, CNo, Grade) VALUES (201215124,1,82),
 ```
+
+### 练习 3.3.1
 
 ```rust,editable
 -- 在这里，你可以执行 SQL 语句
@@ -263,7 +285,6 @@ INSERT into CStudent Values(201215124,'张立','男',19,'IS');
 `UPDATE`语句用于修改表中已存在的记录。以下是`UPDATE`语句的语法：
 
 ```sql
-
 UPDATE table_name SET column1 = value1, column2 = value2, ... WHERE condition;
 ```
 
@@ -289,7 +310,6 @@ UPDATE CStudent SET Sage=21 WHERE Sno=201215122;
 `DELETE`语句用于从数据库表中删除满足特定条件的一条或多条记录。以下是最基本的`DELETE`语句的语法：
 
 ```sql
-
 DELETE FROM table_name [WHERE condition];
 ```
 
@@ -376,10 +396,26 @@ WHERE Sage >= 18 and Sage <= 19;
 - NOT：用于否定条件，如 `NOT IN` 或 `NOT LIKE`
 - AND 和 OR：用于组合多个条件，如 `WHERE Age > 18 AND City = 'New York'`
 
+#### 练习 3.4.1
+
 ```rust,editable
--- 练习：查询 CS 学院的所有学生
+-- 练习 1：查询 CS 学院的所有学生
 SELECT * FROM CStudent WHERE Sdept = 'CS';
 ```
+
+```rust,editable
+-- 练习 2：查询年龄在 18 岁到 19 岁之间的学生，补全 WHERE 子句中的条件
+SELECT Sno, Sname, Sdept
+FROM CStudent
+WHERE ; -- 补全条件
+```
+
+```rust,editable
+-- 练习3：查询学号为 20121512 的同学的所有成绩
+
+```
+
+
 
 ## 3.4.2 NULL 关键字
 
@@ -394,12 +430,21 @@ FROM CStudent
 WHERE Sage IS NULL;
 ```
 
+#### 练习 3.4.2
+
 ```rust,editable
--- 练习：查找 Sage 不为 NULL 的所有学生的学号、姓名和年龄
+-- 练习 1：查找 Sage 不为 NULL 的所有学生的学号、姓名和年龄
 SELECT Sno, Sname, Sage
 FROM CStudent
 WHERE Sage IS NOT NULL;
 ```
+
+```rust,editable
+-- 练习 2：查找不需要前置课程的课程名
+
+```
+
+
 
 ## 3.4.3 条件查询——字符串匹配
 
@@ -452,17 +497,23 @@ WHERE REPLACE(title, ' ', '') = 'TitleWithoutSpaces';
 
 <aside>
 💡 除了字符串函数外，数据库管理系统还会提供时间函数、编解码函数、数值函数等各种函数供大家使用
-
 </aside>
 
+#### 练习 3.4.3
+
 ```rust,editable
--- 练习：找出名字以 Zhang 开头的同学的学号与姓名
-SELECT Sno, Sname, Sdept
+-- 练习 1：找出名字以 Zhang 开头的同学的学号与姓名
+SELECT Sno, Sname
 FROM CStudent
 WHERE Sname LIKE 'Zhang%';
 ```
 
-## 3.4.4 对数据进行排序-ORDER BY
+```rust,editable
+-- 练习 2：找出名字中包含 Chen 的同学
+
+```
+
+## 3.4.4 数据排序-ORDER BY
 
 有时候我们希望对查询的结果进行排序，比如将全校学生按照绩点进行排序，这时我们可以使用 ORDER BY 子句，基本语法如下：
 
@@ -491,15 +542,23 @@ ORDER BY column ASC/DESC
 LIMIT num_limit OFFSET num_offset;
 ```
 
-例如：
+#### 练习：3.4.4
+
 ```rust,editable
--- 查询成绩排名 3-4的学生
+-- 练习1：查询成绩排名 3-4的学生
 SELECT * FROM CSC
 ORDER BY Grade DESC
 LIMIT 2 OFFSET 2;
 ```
 
-## 3.4.5 对数据进行去重-DISTINCT
+```rust,editable
+-- 练习2：将所有同学按照姓名升序排序
+
+```
+
+
+
+## 3.4.5 数据去重-DISTINCT
 
 在SQL查询语句中，`DISTINCT` 关键字通常与 `SELECT` 语句结合使用，用于返回唯一的（无重复）列值，它的用法如下：
 
@@ -508,11 +567,20 @@ SELECT DISTINCT column1, column2
 FROM table WHERE condition(s);
 ```
 
-例如：
+还记得关系代数中的投影吗？关系投影总是返回不同的元组，因此永远不需要`DISTINCT`。而SQL中的`DISTINCT`操作可以看作是为了达到与关系代数中投影相似的去重效果。
+
+#### 练习 3.4.6
+
 ```rust,editable
 -- 查询所有学生的名字并去重
 SELECT DISTINCT Sname FROM CStudent;
 ```
+
+```
+-- 查询 CSC 中所有的 Cno 并去重
+```
+
+
 
 ## 3.4.6 聚集查询
 
@@ -557,7 +625,14 @@ SELECT COUNT(*) AS studnet_number FROM CStudent;
 
 ### 数据分组-Group By
 
-分组查询是指通过使用`GROUP BY`子句将数据表中的记录按照一个或多个字段的值进行分类，将具有相同字段值的记录集合划分为一个组，然后对每个组执行某种形式的聚合计算或统计分析。
+分组查询是指通过使用`GROUP BY`子句将数据表中的记录按照一个或多个字段的值进行分类，将具有相同字段值的记录集合划分为一个组，然后对每个组执行某种形式的聚合计算或统计分析。其用法为：
+
+```sql
+SELECT column_name, aggregate_function(column_name)
+FROM table_name
+WHERE column_name operator value
+GROUP BY column_name;
+```
 
 例如：
 
@@ -568,6 +643,49 @@ Group By Sno;
 ```
 
 在这个查询中，`GROUP BY Sno` 意味着将数据按`Sno`字段的值进行分组，`COUNT(CNO)`则是对每个学生选的课程进行统计，最后查询结果展示的是每个客户及其对应的总销售额。
+
+你也可以对多列进行分组：
+
+```SQL
+-- 查看每个学院男生和女生的数量
+SELECT Sdept, Ssex, COUNT(Sno) FROM CStudent
+GROUP BY Sdept, Ssex;
+```
+
+注意，不在分组条件中的列，只能用聚合函数进行分组，否则会发生错误，以下就是一个错误的例子：
+
+```rust,editable
+SELECT Sno, Cno
+FROM CSC 
+GROUP BY Sno
+```
+
+`GROUP BY`也可以与`WHERE`子句一起使用。此时，会先根据`WHERE`子句中的条件筛选数据，再使用`GROUP BY`进行分组，如：
+
+```rust,editable
+-- 超找学生的选课数量，但不包括课程编号为 1 的课程
+SELECT CSC.Sno, COUNT(Cno)
+FROM CSC 
+Where Cno <> 1
+GROUP BY CSC.Sno;
+```
+
+我们可以使用`EXPLAIN ANALYZE`来查看查询的执行过程。查询执行过程通常可以被表达为一颗算子树，树中的每个节点代表一个特定的操作或算子，这些算子执行数据库中的基础操作，如筛选（Filter）、投影（Project）、连接（JOIN）、聚合（Aggregation）、排序（Sort）等。树的结构定义了这些操作的执行顺序，从根节点到叶节点的遍历过程反映了查询的实际执行流程。
+
+```rust,editable
+-- 尝试用 EXPLAIN ANALYZE 来打印算子树
+EXPLAIN ANALYZE
+SELECT CSC.Sno, COUNT(Cno)
+FROM CSC 
+Where Cno <> 1
+GROUP BY CSC.Sno;
+```
+
+结果中，第一栏表示算子名称。接下来让我们自下而上地简单解释一下算子树上的每个节点的含义：
+
+- SEQ_SCAN：顺序扫描整张表，第二栏为表名，第三栏为扫描的列，第四栏为扫描后产生的临时表
+- FILTER：筛选算子，这里实现对`WHERE`子句中的条件的的筛选，第二栏为筛选条件，第三栏为筛选结果
+- 
 
 ### HAVING
 
@@ -582,7 +700,7 @@ Group By Sno
 HAVING AVG(Grade)>85;
 ```
 
-## 3.4.5 连接查询
+## 3.4.7 连接查询
 
 我们可以通过多个表连接到一起，来查询分散在不同的表里的信息。就好比你在图书馆找书，每本书代表一个数据库表，每本书里的章节代表表中的记录。当你需要了解的信息分散在几本书（几张表）中时，你就需要同时查阅这些书籍才能获得完整的答案。
 
@@ -639,7 +757,7 @@ FROM CStudent, CSC
 WHERE CStudent.Sno=CSC.Sno;
 ```
 
-## 3.4.6 子查询
+## 3.4.8 子查询
 
 子查询（Correlated Subquery）是SQL查询中的一种特殊形式，它出现在外部查询（主查询）内部，且内部查询（子查询）依赖于外部查询的每一行数据。每次外部查询执行到新的一行时，子查询都会被执行一次，每次执行都会使用外部查询当前行的值作为其查询条件的一部分。
 
@@ -701,7 +819,7 @@ WHERE Grade > (
     SELECT *
     FROM table1
     WHERE column1 NOT IN (SELECT column2 FROM table2);
-
+    
     ```
 
 
