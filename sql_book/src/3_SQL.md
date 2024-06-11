@@ -14,9 +14,9 @@ SQL（Structured Query Language）是一种标准化的用于管理和处理关�
 
 SQL（Structured Query Language）根据其功能可以分为以下几大类别：
 
-- DDL（Data Definition Language，数据定义语言）： 用于创建、修改和删除数据库对象，如表、视图、索引、序列、存储过程、触发器等，主要关键字包括：CREATE、ALTER、DROP等。
+- DDL（Data Definition Language，数据定义语言）： 用于创建、修改和删除数据库对象，如表、视图、索引、序列、存储过程、触发器等，主要关键字包括：CREATE、ALTER、DROP 等。
 - DML（Data Manipulation Language，数据操纵语言）： 用于插入、更新和删除表中的数据行，主要关键字包括：INSERT（插入新数据）、UPDATE（更新数据）、DELETE（删除数据）等。
-- DQL（Data Query Language，数据查询语言）：用于对数据库表中的数据进行查询和检索，主要关键词包括：SELECT、
+- DQL（Data Query Language，数据查询语言）：用于对数据库表中的数据进行查询和检索，主要关键词包括：SELECT、FROM、WHERE 等。
 - DCL（Data Control Language，数据控制语言**）**：用于管理和控制数据库的权限以及事务控制， 主要关键字包括：GRANT（授予权限）、REVOKE（撤销权限）、COMMIT（提交事务）、ROLLBACK（回滚事务）等。
 
 # 3.2 DDL
@@ -44,7 +44,7 @@ CREATE TABLE <表名>	(
 -- 例 3.1
 -- 建立“学生”表 CStudent，学号是主码，姓名取值唯一
 CREATE TABLE CStudent(
-  SS    VARCHAR PRIMARY KEY,/* 列级完整性约束条件,Sno是主码*/
+  Sno    VARCHAR PRIMARY KEY,/* 列级完整性约束条件,Sno是主码*/
   Sname VARCHAR(20) UNIQUE, /* Sname取唯一值*/
   Ssex  VARCHAR(2),
   Sage  INT,
@@ -66,15 +66,22 @@ Create table CSC(
 );
 ```
 
-例 3.1：创建一个表，并用 `SHOW TABLES`查看刚创建的表：
+在创建表之后，我们可以用`SHOW TABLES`查看所有表，也可以用`DESCRIBE`来查看表的所有信息。
+
+### 练习 3.2.1
 
 ```rust,editable
--- 在这里，你可以执行 SQL 语句
+-- 练习 1：创建一个表，并用 SHOW TABLES 查看刚创建的表
 CREATE TABLE Student(
   SS VARCHAR
 );
 
 SHOW TABLES;
+```
+
+```rust,editable
+-- 练习 2：查看 Student 表的详细信息
+DESCRIBE Student;
 ```
 
 
@@ -128,10 +135,6 @@ ALTER TABLE old_table_name RENAME TO new_table_name;
 
 ```sql
 ALTER TABLE table_name RENAME COLUMN old_column_name TO new_column_name;
-```
-
-```rust, editable
-
 ```
 
 **重命名索引：**
@@ -209,26 +212,32 @@ ALTER TABLE table_name ALTER COLUMN column_name SET NOT NULL;
 ### 练习 3.2.3 
 
 ```rust,editable
--- 1. 将 Student 中的 SS 列重命名为 Sno
+-- 练习 1. 将 Student 中的 SS 列重命名为 Sno
 ALTER TABLE Student RENAME COLUMN SS to Sno;
 ```
 
 ```rust,editable
--- 2. 向 Student 中添加 SName 列
-ALTER Table Student Add Column SName CHAR(10);
+-- 练习 2. 向 Student 中添加 SName 列
+ALTER Table Student Add Column Sname CHAR(10);
 ```
 
 ```rust,editable
--- 3. 将 Student 表中的 Sno 列的类型改为 INT
+-- 练习 3. 将 Student 表中的 Sno 列的类型改为 INT
 ALTER Table Student Alter Column Sno type INT;
 ```
+
+```rust,editable
+-- 练习 4：查看修改后的 Student 表
+SHOW Student;
+```
+
+
 
 ## 3.2.4 删除表
 
 可以使用`DROP TABLE` 语句来实现删除表，用法如下：
 
 ```sql
-
 DROP TABLE table_name;
 
 # 删除 CStudent 表
@@ -242,7 +251,7 @@ Drop TABLE CStudent;
 ### 练习 3.2.4
 
 ```rust,editable
--- 在这里，你可以执行 SQL 语句
+-- 练习：删除 Student 表
 Drop TABLE Student;
 ```
 
@@ -267,17 +276,28 @@ VALUES (value1, value2, ..., valueN);
 ```sql
  -- 将一个新学生元组插入到 Student 表中。
 INSERT INTO CStudent VALUES (201215121,'李勇','男',20,'CS');
-Insert into CSC(Sno, CNo, Grade) VALUES (201215124,1,82),
+Insert INTO CSC(Sno, CNo, Grade) VALUES (201215124,1,82),
 ```
 
 ### 练习 3.3.1
 
 ```rust,editable
--- 在这里，你可以执行 SQL 语句
-INSERT into CStudent Values(201215121,'李勇','男',20,'CS');
-INSERT into CStudent Values(201215122,'刘晨','男',NULL,'CS');
-INSERT into CStudent Values(201215123,'王敏','女',18,'MA');
-INSERT into CStudent Values(201215124,'张立','男',19,'IS');
+-- 练习 1：重新创建表
+Create table Student (
+    Sno INt Primary key,
+    Sname VARCHAR(10),
+    Ssex VARCHAR(4),
+    Sage Int,
+    Sdept VARCHAR(10)
+);
+```
+
+```rust,editable
+-- 练习 2：插入数据
+INSERT INTO Student Values(201215121,'LiYong','male',20,'CS');
+INSERT INTO Student(Sno, Sname, Ssex, Sdept) Values(201215122,'LiuChen','male','CS');
+-- 查看刚刚插入的数据
+SELECT * FROM Student;
 ```
 
 ## 3.3.2 UPDATE 语句
@@ -300,9 +320,13 @@ UPDATE table_name SET column1 = value1, column2 = value2, ... WHERE condition;
 UPDATE CStudent SET Sage=21 WHERE Sno=201215122;
 ```
 
+### 练习 3.3.2
+
 ```rust,editable
--- 在这里，你可以执行 SQL 语句
-UPDATE CStudent SET Sage=21 WHERE Sno=201215122;
+-- 练习 1：将学号 201215122 的同学的 Sage 设置为 21
+UPDATE Student SET Sage=21 WHERE Sno=201215122;
+-- 查看更新的结果
+SELECT * FROM Student;
 ```
 
 ## 3.3.3 DELETE 语句
@@ -322,9 +346,13 @@ DELETE FROM table_name [WHERE condition];
 DELETE FROM CSC WHERE Sno=201215123;
 ```
 
+### 练习 3.3.3
+
 ```rust,editable
--- 在这里，你可以执行 SQL 语句
-DELETE FROM CStudent;
+-- 练习 1：删除学号为 201215121 的同学
+DELETE FROM Student WHERE Sno=201215121;
+-- 查看删除的结果
+SELECT * FROM Student;
 ```
 
 # 3.4 SELECT 语句
@@ -637,7 +665,7 @@ GROUP BY column_name;
 例如：
 
 ```sql
-# 统计每个学生选了多少门课
+-- 统计每个学生选了多少门课
 SELECT Sno, COUNT(Cno) FROM CSC
 Group By Sno;
 ```
@@ -652,7 +680,7 @@ SELECT Sdept, Ssex, COUNT(Sno) FROM CStudent
 GROUP BY Sdept, Ssex;
 ```
 
-注意，不在分组条件中的列，只能用聚合函数进行分组，否则会发生错误，以下就是一个错误的例子：
+注意，不在分组条件中的列，只能用聚合函数进行聚合，否则会发生错误，以下就是一个错误的例子：
 
 ```rust,editable
 SELECT Sno, Cno
@@ -685,7 +713,10 @@ GROUP BY CSC.Sno;
 
 - SEQ_SCAN：顺序扫描整张表，第二栏为表名，第三栏为扫描的列，第四栏为扫描后产生的临时表
 - FILTER：筛选算子，这里实现对`WHERE`子句中的条件的的筛选，第二栏为筛选条件，第三栏为筛选结果
-- 
+- PROJECTION：投影算子，第二栏为投影的列名，第三栏为投影的结果
+- HASH_GROUP_BY：用 Hash 的方法实现的`GROUP BY`算子，这里由于内部处理，用编号代替了列名，但编号仍与上一个算子中的列的次序对应
+
+从算子树可以看出，当`GROUP BY`与`WHERE`子句一起使用时，会先根据`WHERE`子句中的条件筛选数据，再使用`GROUP BY`进行分组。
 
 ### HAVING
 
@@ -693,27 +724,45 @@ GROUP BY CSC.Sno;
 
 
 ```rust,editable
--- 例：查询平均分大于 85 的学生
+-- 例：查询平均分大于 85 的学生，但不包括学号为 201215121 的同学
 SELECT Sno, COUNT(Cno)
 FROM CSC
+WHERE Sno <> 201215121
 Group By Sno
 HAVING AVG(Grade)>85;
 ```
+
+### 练习 3.4.6
+
+```rust,editable
+-- 练习 1：查询学号为 201215121 的同学的平均分
+SELECT AVG(Grade) FROM CSC WHERE Sno = 201215121
+```
+
+```rust,editable
+-- 练习 2：查询各个学院的人数
+```
+
+
 
 ## 3.4.7 连接查询
 
 我们可以通过多个表连接到一起，来查询分散在不同的表里的信息。就好比你在图书馆找书，每本书代表一个数据库表，每本书里的章节代表表中的记录。当你需要了解的信息分散在几本书（几张表）中时，你就需要同时查阅这些书籍才能获得完整的答案。
 
+### 用`WHERE`子句实现连接查询
+
 通过 WHERE 子句，我们就可以实现的简单的多表查询：
 
 ```sql
-# 查询每个学生及其选修课程的情况
+-- 查询每个学生及其选修课程的情况
 SELECT CStudent.Sno, Sname, CNo, Grade
 FROM CStudent, CSC
 WHERE CStudent.Sno=CSC.Sno;
 ```
 
 由于涉及到了多个表，所以我们需要`table_name.column_name` 的形式来描述我们选择的列。
+
+### `JOIN`关键字
 
 此外，我们还可以通过 `JOIN` 关键字来进行连接：
 
@@ -723,13 +772,14 @@ SELECT CStudent.Sno, Sname, CNo, Grade
 FROM CStudent join CSC on CStudent.Sno=CSC.Sno;
 ```
 
-`JOIN` 有很多类型，它们各自有不同的功能：
+相比起`WHERE`，`JOIN` 有更多的类型，它们可以实现更多功能：
 
 1. **内连接（INNER JOIN 或简称 JOIN）** 内连接只返回两个表中那些在连接列上具有匹配值的行的组合。如果某行在连接的列上没有找到匹配项，则不会出现在结果集中。
+    
     ```sql
     SELECT * FROM TableA INNER JOIN TableB ON TableA.Key = TableB.Key;
     ```
-
+    
 2. **左外连接（LEFT JOIN 或 LEFT OUTER JOIN）** 左外连接返回左表（TableA）的所有行，即使在右表（TableB）中找不到匹配的记录。对于在右表中未找到匹配的行，在结果集中对应的右表列会被填充为NULL值。
     ```sql
     SELECT * FROM TableA LEFT JOIN TableB ON TableA.Key = TableB.Key;
@@ -749,6 +799,9 @@ FROM CStudent join CSC on CStudent.Sno=CSC.Sno;
     ```sql
     SELECT * FROM TableA CROSS JOIN TableB;
     ```
+
+为了更深入地理解 `JOIN`，让我们看一下它的执行过程：
+
 ```rust,editable
 -- 试一试：使用 EXPLAIN ANALYZE 查看查询的执行
 EXPLAIN ANALYZE
@@ -756,6 +809,27 @@ SELECT CStudent.Sno, Sname, CNo, Grade
 FROM CStudent, CSC
 WHERE CStudent.Sno=CSC.Sno;
 ```
+
+这里，`HASH_JOIN`有两个儿子，这意味着它接受两个输入，它会将输入的两个临时表按照连接条件连接起来。`HASH_JOIN`的第二栏分别是 JOIN 的类型和连接条件，我们不难发现，用`WHERE`实现的连接就是内连接。
+
+### 练习 3.4.7
+
+```rust,editable
+-- 练习 1：查询 LiYong 的选课情况，并输出课程名字和成绩
+SELECT Cname, Grade
+FROM CStudent 
+JOIN CSC ON CStudent.Sno=CSC.Sno
+JOIN CCourse ON CSC.Cno=CCourse.Cno
+WHERE Sname = 'LiYong';
+```
+
+```rust,editable
+-- 练习 2：查询所有同学的选课情况，如果没有选课，也输出学号姓名
+SELECT CStudent.Sno, Sname, CNo, Grade
+FROM CStudent left join CSC on CStudent.Sno=CSC.Sno;
+```
+
+
 
 ## 3.4.8 子查询
 
@@ -832,21 +906,15 @@ WHERE Grade > (
     - 然后再取外层表的下一个元组
     - 重复这一过程，直至外层表全部检查完为止
 ```rust,editable
--- 查询选修了课程名为“信息系统”的学生学号和姓名
+-- 查询非计算机科学系中比计算机科学系任意一个学生年龄小的学生姓名和年龄
 EXPLAIN ANALYZE
-SELECT Sno, Sname
+SELECT Sname, Sage
 FROM CStudent
-WHERE Sno In
-    (
-        SELECT Sno
-        FROM CSC
-        WHERE Cno IN
-        (
-            SELECT Cno
-            FROM CCourse
-            WHERE Cname='Information System'
-        )
-    );
+WHERE Sdept!='CS' and Sage< ANY (
+    SELECT Sage
+    FROM CStudent
+    WHERE Sdept='CS' 
+);
 ```
 
 ### 带有 ANY（SOME）或 ALL 谓词的子查询
@@ -909,9 +977,11 @@ HAVING COUNT(*) >= ALL(
 );
 ```
 
+### 练习 3.4.8
+
 
 ```rust,editable
--- 练习：查询非计算机科学系中比计算机科学系任意一个学生年龄小的学生姓名和年龄
+-- 练习 1：查询非计算机科学系中比计算机科学系任意一个学生年龄小的学生姓名和年龄
 SELECT Sname, Sage
 FROM CStudent
 WHERE Sdept!='CS' and Sage< ANY (
@@ -920,3 +990,25 @@ WHERE Sdept!='CS' and Sage< ANY (
     WHERE Sdept='CS'
 );
 ```
+
+```rust,editable
+-- 练习 2：查询非计算机科学系中比计算机科学系所有学生年龄都小的学生姓名及年龄
+SELECT Sname, Sage
+FROM CStudent
+WHERE Sdept!='CS' and Sage< ALL (
+    SELECT Sage
+    FROM CStudent
+    WHERE Sdept='CS' 
+);
+```
+
+```rust,editable
+-- 练习 3：查询没有选修1号课程的学生姓名
+SELECT Sname
+FROM CStudent
+WHERE NOT EXISTS
+(SELECT *
+FROM CSC
+WHERE Sno = CStudent.Sno AND Cno='1');
+```
+

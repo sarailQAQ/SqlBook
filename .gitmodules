@@ -1,0 +1,3 @@
+[submodule "darkdb-server/darkdb"]
+	path = darkdb-server/darkdb
+	url = https://github.com/sarailQAQ/darkdb.git
