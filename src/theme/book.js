@@ -141,7 +141,7 @@ function playground_text(playground, hidden = true) {
         .then(response => {
             console.log(response)
             if (response.length === 0) {
-                result_block.innerText = "No output";
+                result_block.innerText = "Success";
                 result_block.classList.add("result-no-output");
             } else {
                 result_block.innerText = response;
