@@ -2,7 +2,7 @@
 server:
 	cd darkdb-server && \
 	git submodule init && git submodule update && \
-	podman build -t ccr.ccs.tencentyun.com/dase314/darkdb-server:latest . && \
+	podman build --http-proxy=false --network=host -t ccr.ccs.tencentyun.com/dase314/darkdb-server:latest . && \
 	echo "build darkdb-server finished"
 
 .PHONY: book

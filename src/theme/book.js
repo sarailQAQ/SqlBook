@@ -132,7 +132,7 @@ function playground_text(playground, hidden = true) {
         const body = new FormData()
         body.append('sql', text)
 
-        fetch_with_timeout("http://127.0.0.1:8080/exec", {
+        fetch_with_timeout("http://106.75.231.3:8080/exec", {
             method: 'POST',
             mode: 'cors',
             body
