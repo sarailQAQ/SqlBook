@@ -18,7 +18,7 @@ COPY --from=Builder --chmod=755 /workspace/target/release/mdbook /app/mdbook
 
 COPY sql_book /app/sql_book
 
-COPY scripts/entrypoont_cmd.sh /app/cmd.sh
+COPY scripts/entrypoint_cmd.sh /app/cmd.sh
 
 WORKDIR /app
 

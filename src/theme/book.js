@@ -128,7 +128,7 @@ function playground_text(playground, hidden = true) {
         }
 
         result_block.innerText = "Running...";
-
+        text = "SET disabled_optimizers = 'statistics_propagation,join_order';\n" + text;
         const body = new FormData()
         body.append('sql', text)
 
