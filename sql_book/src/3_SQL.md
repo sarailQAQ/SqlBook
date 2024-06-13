@@ -841,7 +841,7 @@ FROM CStudent left join CSC on CStudent.Sno=CSC.Sno;
 
 ```sql
 SELECT column1, column2, …
-FROM <表名>，(SELECT XXX) as <别名>
+FROM <表名>，(SELECT XXX) AS <别名>
 [WHERE <条件>];
 ```
 
@@ -850,8 +850,8 @@ FROM <表名>，(SELECT XXX) as <别名>
 ```sql
 
 SELECT CStudent.Sname FROM
-(SELECT CSC.Sno FROM CSC GROUP BY CSC.Sno HAVING AVG(Grade)>90) as T
-join CStudent on T.Sno=CStudent.Sno;
+( SELECT CSC.Sno FROM CSC GROUP BY CSC.Sno HAVING AVG(Grade)>90 ) AS T
+JOIN CStudent ON T.Sno=CStudent.Sno;
 ```
 
 ### WHERE 子句嵌套子查询
