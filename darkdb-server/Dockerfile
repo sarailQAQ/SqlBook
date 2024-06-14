@@ -1,7 +1,7 @@
 FROM ubuntu:latest AS Builder
 LABEL authors="sarail"
 
-RUN sed -i 's#http://archive.ubuntu.com/#http://mirrors.tuna.tsinghua.edu.cn/#' /etc/apt/sources.list && \
+RUN sed -i 's#http://archive.ubuntu.com/#http://mirrors.tuna.tsinghua.edu.cn/#' /etc/apt/sources.list.d/ubuntu.sources && \
     apt update && apt -y install golang-go ca-certificates git make cmake
 
 COPY darkdb /workspace/src/darkdb

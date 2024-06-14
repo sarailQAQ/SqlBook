@@ -17,7 +17,7 @@ SQL（Structured Query Language）根据其功能可以分为以下几大类别�
 - DDL（Data Definition Language，数据定义语言）： 用于创建、修改和删除数据库对象，如表、视图、索引、序列、存储过程、触发器等，主要关键字包括：CREATE、ALTER、DROP 等。
 - DML（Data Manipulation Language，数据操纵语言）： 用于插入、更新和删除表中的数据行，主要关键字包括：INSERT（插入新数据）、UPDATE（更新数据）、DELETE（删除数据）等。
 - DQL（Data Query Language，数据查询语言）：用于对数据库表中的数据进行查询和检索，主要关键词包括：SELECT、FROM、WHERE 等。
-- DCL（Data Control Language，数据控制语言**）**：用于管理和控制数据库的权限以及事务控制， 主要关键字包括：GRANT（授予权限）、REVOKE（撤销权限）、COMMIT（提交事务）、ROLLBACK（回滚事务）等。
+- DCL（Data Control Language，数据控制语言)：用于管理和控制数据库的权限以及事务控制， 主要关键字包括：GRANT（授予权限）、REVOKE（撤销权限）、COMMIT（提交事务）、ROLLBACK（回滚事务）等。
 
 # 3.2 DDL
 
@@ -701,7 +701,7 @@ GROUP BY CSC.Sno;
 我们可以使用`EXPLAIN ANALYZE`来查看查询的执行过程。查询执行过程通常可以被表达为一颗算子树，树中的每个节点代表一个特定的操作或算子，这些算子执行数据库中的基础操作，如筛选（Filter）、投影（Project）、连接（JOIN）、聚合（Aggregation）、排序（Sort）等。树的结构定义了这些操作的执行顺序，从根节点到叶节点的遍历过程反映了查询的实际执行流程。
 
 ```rust,editable
--- 尝试用 EXPLAIN ANALYZE 来打印算子树
+-- 用 EXPLAIN ANALYZE 来打印算子树
 EXPLAIN ANALYZE
 SELECT CSC.Sno, COUNT(Cno)
 FROM CSC 
@@ -709,7 +709,7 @@ Where Cno <> 1
 GROUP BY CSC.Sno;
 ```
 
-结果中，第一栏表示算子名称。接下来让我们自下而上地简单解释一下算子树上的每个节点的含义：
+执行结果中，每个节点的第一栏表示算子名称。接下来让我们自下而上地简单解释一下算子树上的每个节点的含义：
 
 - SEQ_SCAN：顺序扫描整张表，第二栏为表名，第三栏为扫描的列，第四栏为扫描后产生的临时表
 - FILTER：筛选算子，这里实现对`WHERE`子句中的条件的的筛选，第二栏为筛选条件，第三栏为筛选结果
@@ -731,6 +731,19 @@ WHERE Sno <> 201215121
 Group By Sno
 HAVING AVG(Grade)>85;
 ```
+
+此时，让我再尝试用`EXPLAIN ANALYZE`查看查询执行过程：
+
+```rust,editable
+EXPLAIN ANALYZE
+SELECT Sno, COUNT(Cno)
+FROM CSC
+WHERE Sno <> 201215121
+Group By Sno
+HAVING AVG(Grade)>85;
+```
+
+可以看到，`HASH_GROUP_BY`的父亲节点是一个`FILTER`节点，这个节点就是用来实现`HAVING`子句中的过滤条件的。从算子树不难看出，我们首先对`WHERE`子句中的条件进行过滤，然后根据`GROUP BY`子句中的字段进行分组，最后根据`HAVING`子句中的条件对分组后的结果进行进一步过滤。
 
 ### 练习 3.4.6
 
@@ -775,7 +788,7 @@ FROM CStudent join CSC on CStudent.Sno=CSC.Sno;
 相比起`WHERE`，`JOIN` 有更多的类型，它们可以实现更多功能：
 
 1. **内连接（INNER JOIN 或简称 JOIN）** 内连接只返回两个表中那些在连接列上具有匹配值的行的组合。如果某行在连接的列上没有找到匹配项，则不会出现在结果集中。
-    
+   
     ```sql
     SELECT * FROM TableA INNER JOIN TableB ON TableA.Key = TableB.Key;
     ```
@@ -805,9 +818,9 @@ FROM CStudent join CSC on CStudent.Sno=CSC.Sno;
 ```rust,editable
 -- 试一试：使用 EXPLAIN ANALYZE 查看查询的执行
 EXPLAIN ANALYZE
-SELECT CStudent.Sno, Sname, CNo, Grade
+SELECT CStudent.Sno, Sname, Cno, Grade
 FROM CStudent, CSC
-WHERE CStudent.Sno=CSC.Sno;
+WHERE CStudent.Sno = CSC.Sno;
 ```
 
 这里，`HASH_JOIN`有两个儿子，这意味着它接受两个输入，它会将输入的两个临时表按照连接条件连接起来。`HASH_JOIN`的第二栏分别是 JOIN 的类型和连接条件，我们不难发现，用`WHERE`实现的连接就是内连接。
@@ -1010,5 +1023,103 @@ WHERE NOT EXISTS
 (SELECT *
 FROM CSC
 WHERE Sno = CStudent.Sno AND Cno='1');
+```
+
+# 3.5 习题
+
+之前的例子中，为了使结果更加简洁明了，我们的数据表数据都比较少，所以在习题中我们使用新的数据表，以下是表描述：
+
+- 学生表：**Student(SId, Sname, Sage, Ssex)**
+  - **SId 学生编号，Sname 学生姓名，Sage 出生年月，Ssex 学生性别**
+- 课程表：**Course(CId, Cname, TId)**
+  - **CId 课程编号，Cname 课程名称，TId 教师编号**
+- 教师表：**Teacher(TId, Tname)**
+  - **TId 教师编号, Tname 教师姓名**
+- 成绩表：**SC(SId,CId,score)**
+  - **SId 学生编号，CId 课程编号，score 分数**
+
+数据已经初始化，如果不小心删除数据，可以运行以下代码重置：
+
+```rust,editable
+IMPORT DATABASE '/app/data/data_3_5.sql';
+
+```
+
+1 查询" 01 "课程比" 02 "课程成绩高的学生的信息及课程分数
+
+1.1 查询同时存在" 01 "课程和" 02 "课程的情况
+
+1.2 查询存在" 01 "课程但可能不存在" 02 "课程的情况(不存在时显示为 null )
+
+1.3 查询不存在" 01 "课程但存在" 02 "课程的情况
+
+```rust,editable
+
+
+```
+
+2 查询平均成绩大于等于 60 分的同学的学生编号和学生姓名和平均成绩
+
+```rust,editable
+
+
+```
+
+3 查询在 SC 表存在成绩的学生信息
+
+```rust,editable
+
+
+```
+
+4 查询所有同学的学生编号、学生姓名、选课总数、所有课程的总成绩(没成绩的显示为 null )
+
+4.1 查有成绩的学生信息
+
+```rust,editable
+
+
+```
+
+5 查询「李」姓老师的数量
+
+```rust,editable
+
+
+```
+
+6 查询学过「张三」老师授课的同学的信息
+
+```rust,editable
+
+
+```
+
+7 查询没有学全所有课程的同学的信息
+
+```rust,editable
+
+
+```
+
+8 查询至少有一门课与学号为" 01 "的同学所学相同的同学的信息
+
+```rust,editable
+
+
+```
+
+9 查询和" 01 "号的同学学习的课程完全相同的其他同学的信息
+
+```rust,editable
+
+
+```
+
+10 查询没学过"张三"老师讲授的任一门课程的学生姓名
+
+```rust,editable
+
+
 ```
 
