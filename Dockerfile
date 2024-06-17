@@ -20,6 +20,10 @@ COPY sql_book /app/sql_book
 
 COPY scripts/entrypoint_cmd.sh /app/cmd.sh
 
+COPY scripts/data_3_5.sql /app/scripts/3_5.sql
+
+RUN mkdir -p /app/data/db3.5 && duckdb test < /app/scripts/3_5.sql
+
 WORKDIR /app
 
 ENTRYPOINT ["bash", "cmd.sh"]

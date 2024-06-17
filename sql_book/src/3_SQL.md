@@ -1041,7 +1041,7 @@ WHERE Sno = CStudent.Sno AND Cno='1');
 数据已经初始化，如果不小心删除数据，可以运行以下代码重置：
 
 ```rust,editable
-IMPORT DATABASE '/app/data/data_3_5.sql';
+IMPORT DATABASE '/app/data/db3.5';
 
 ```
 
