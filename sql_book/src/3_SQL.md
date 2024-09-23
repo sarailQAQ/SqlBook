@@ -1,5 +1,9 @@
 # 3. 关系数据库-SQL
 
+<!-- toc -->
+
+{{#title My Title}}
+
 # 3.1 什么是 SQL
 
 ## 3.1.1 SQL 简介
@@ -72,7 +76,7 @@ Create table CSC(
 
 ```rust,editable
 -- 练习 1：创建一个表，并用 SHOW TABLES 查看刚创建的表
-CREATE TABLE Student(
+CREATE TABLE MyStudent(
   SS VARCHAR
 );
 
@@ -80,8 +84,8 @@ SHOW TABLES;
 ```
 
 ```rust,editable
--- 练习 2：查看 Student 表的详细信息
-DESCRIBE Student;
+-- 练习 2：查看  MyStudent 表的详细信息
+DESCRIBE  MyStudent;
 ```
 
 
@@ -212,23 +216,23 @@ ALTER TABLE table_name ALTER COLUMN column_name SET NOT NULL;
 ### 练习 3.2.3 
 
 ```rust,editable
--- 练习 1. 将 Student 中的 SS 列重命名为 Sno
-ALTER TABLE Student RENAME COLUMN SS to Sno;
+-- 练习 1：将 MyStudent 中的 SS 列重命名为 Sno
+ALTER TABLE MyStudent RENAME COLUMN SS to Sno;
 ```
 
 ```rust,editable
--- 练习 2. 向 Student 中添加 SName 列
-ALTER Table Student Add Column Sname CHAR(10);
+-- 练习 2：向 MyStudent 中添加 SName 列
+ALTER Table MyStudent Add Column Sname CHAR(10);
 ```
 
 ```rust,editable
--- 练习 3. 将 Student 表中的 Sno 列的类型改为 INT
-ALTER Table Student Alter Column Sno type INT;
+-- 练习 3：将 MyStudent 表中的 Sno 列的类型改为 INT
+ALTER Table MyStudent Alter Column Sno type INT;
 ```
 
 ```rust,editable
--- 练习 4：查看修改后的 Student 表
-SHOW Student;
+-- 练习 4：查看修改后的 MyStudent 表
+SHOW MyStudent;
 ```
 
 
@@ -251,8 +255,8 @@ Drop TABLE CStudent;
 ### 练习 3.2.4
 
 ```rust,editable
--- 练习：删除 Student 表
-Drop TABLE Student;
+-- 练习：删除  MyStudent 表
+Drop TABLE MyStudent;
 ```
 
 # 3.3 DML
@@ -283,7 +287,7 @@ Insert INTO CSC(Sno, CNo, Grade) VALUES (201215124,1,82),
 
 ```rust,editable
 -- 练习 1：重新创建表
-Create table Student (
+Create table MyStudent (
     Sno INt Primary key,
     Sname VARCHAR(10),
     Ssex VARCHAR(4),
@@ -294,10 +298,10 @@ Create table Student (
 
 ```rust,editable
 -- 练习 2：插入数据
-INSERT INTO Student Values(201215121,'LiYong','male',20,'CS');
-INSERT INTO Student(Sno, Sname, Ssex, Sdept) Values(201215122,'LiuChen','male','CS');
+INSERT INTO MyStudent Values(201215121,'LiYong','male',20,'CS');
+INSERT INTO MyStudent(Sno, Sname, Ssex, Sdept) Values(201215122,'LiuChen','male','CS');
 -- 查看刚刚插入的数据
-SELECT * FROM Student;
+SELECT * FROM MyStudent;
 ```
 
 ## 3.3.2 UPDATE 语句
@@ -324,9 +328,9 @@ UPDATE CStudent SET Sage=21 WHERE Sno=201215122;
 
 ```rust,editable
 -- 练习 1：将学号 201215122 的同学的 Sage 设置为 21
-UPDATE Student SET Sage=21 WHERE Sno=201215122;
+UPDATE MyStudent SET Sage=21 WHERE Sno=201215122;
 -- 查看更新的结果
-SELECT * FROM Student;
+SELECT * FROM MyStudent;
 ```
 
 ## 3.3.3 DELETE 语句
@@ -350,9 +354,9 @@ DELETE FROM CSC WHERE Sno=201215123;
 
 ```rust,editable
 -- 练习 1：删除学号为 201215121 的同学
-DELETE FROM Student WHERE Sno=201215121;
+DELETE FROM MyStudent WHERE Sno=201215121;
 -- 查看删除的结果
-SELECT * FROM Student;
+SELECT * FROM MyStudent;
 ```
 
 # 3.4 SELECT 语句

@@ -6,3 +6,12 @@ src = "src"
 
 [output.html.playground]
 editable = true
+
+[preprocessor.pagetoc]
+[output.html]
+additional-css = ["theme/pagetoc.css"]
+additional-js  = ["theme/pagetoc.js"]
+
+#[preprocessor.toc]
+#command = "mdbook-toc"
+#renderer = ["html"]

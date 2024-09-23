@@ -2,7 +2,7 @@
 
 execsql() {
     local sql="$1"
-    local url='http://106.75.231.3:8080/exec'
+    local url='http://106.75.252.59:8080/exec'
     local data="sql=\"$sql\""
     local response=$(curl -s -X POST -F "$data" "$url")
     echo "$response"
